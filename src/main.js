@@ -1,0 +1,144 @@
+import * as THREE from 'three';
+import {
+  createWater,
+  createSky,
+  createSun,
+  createClouds,
+  updateClouds,
+  createSeagulls,
+  updateSeagulls,
+  createLights,
+} from './world.js';
+import { Boat } from './boat.js';
+import { Game } from './game.js';
+import { Input, CameraRig } from './controls.js';
+import { Hud } from './hud.js';
+import { Sound } from './audio.js';
+
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9ad5ef);
+scene.fog = new THREE.Fog(0xb6e2f2, 340, 640);
+
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.5, 1400);
+camera.position.set(0, 16, 40);
+
+scene.add(createLights());
+const sky = createSky();
+scene.add(sky);
+
+const water = createWater();
+scene.add(water);
+
+const sun = createSun();
+scene.add(sun);
+
+const clouds = createClouds(16);
+scene.add(clouds);
+
+const seagulls = createSeagulls(5);
+scene.add(seagulls);
+
+const boat = new Boat(scene);
+boat.group.position.set(0, 0, 58);
+boat.heading = Math.PI;
+
+const hud = new Hud();
+const sound = new Sound();
+const input = new Input();
+const rig = new CameraRig(camera, renderer.domElement);
+
+let game = new Game(scene, boat, hud, sound);
+
+function setMode(mode) {
+  rig.setMode(mode, boat);
+  hud.setMode(mode);
+  hud.toast(
+    mode === 'boat'
+      ? 'Modo barco: W/S aceleram, A/D viram o leme.'
+      : 'Modo câmera: arraste para girar, role para aproximar, WASD desliza.',
+    3.5
+  );
+}
+
+function resetGame() {
+  for (const island of game.islands) scene.remove(island);
+  for (const character of game.characters) character.parent?.remove(character);
+  boat.group.position.set(0, 0, 58);
+  boat.heading = Math.PI;
+  boat.speed = 0;
+  game = new Game(scene, boat, hud, sound);
+  setMode('boat');
+}
+
+hud.bindHelp();
+hud.bindTouch(input);
+hud.setMode('boat');
+hud.onModeToggle(() => setMode(rig.mode === 'boat' ? 'free' : 'boat'));
+hud.onSoundToggle((enabled) => sound.setEnabled(enabled));
+hud.onStart(() => {
+  sound.ensure();
+  setMode('boat');
+});
+hud.onRestart(() => resetGame());
+
+input.on('key', (code) => {
+  if (code === 'KeyC') {
+    setMode(rig.mode === 'boat' ? 'free' : 'boat');
+  }
+  if (code === 'KeyH') {
+    sound.horn();
+    boat.ringBell();
+  }
+  if (code === 'KeyR') {
+    rig.snapBehind(boat);
+  }
+});
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+rig.setMode('boat', boat);
+
+// Acesso ao estado do jogo pelo console do navegador (útil para depurar e testar).
+window.ilhas = { get game() { return game; }, boat, camera, rig, scene };
+
+const clock = new THREE.Clock();
+let elapsed = 0;
+
+function animate() {
+  const dt = Math.min(0.05, clock.getDelta());
+  elapsed += dt;
+
+  input.update(dt);
+  const driving = rig.mode === 'boat';
+  boat.update(dt, driving ? input : { throttle: 0, steer: 0 }, elapsed, game.islands);
+  rig.update(dt, boat, input);
+  game.update(dt, elapsed, camera);
+
+  // Mar, céu e sol acompanham a câmera: o mundo nunca tem fim à vista.
+  water.userData.material.uniforms.uTime.value = elapsed;
+  water.position.set(camera.position.x, 0, camera.position.z);
+  sky.position.set(camera.position.x, 0, camera.position.z);
+  sun.position.set(camera.position.x + 60, 150, camera.position.z - 340);
+  sun.lookAt(camera.position);
+  sun.userData.rays.rotation.z = elapsed * 0.15;
+  updateClouds(clouds, dt);
+  updateSeagulls(seagulls, elapsed);
+
+  hud.update(dt);
+  hud.drawMinimap(game.islands, boat, game.homeIsland);
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+animate();

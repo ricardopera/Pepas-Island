@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Ilhas da Pepa — passeio de barco</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚤</text></svg>"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+
+    <!-- Painel de missão -->
+    <div id="hud">
+      <h1>Ilhas da Pepa</h1>
+      <div class="stats">
+        <span class="chip">🧍 A bordo: <b id="aboard">0</b></span>
+        <span class="chip">🎉 Na festa: <b id="delivered">0/6</b></span>
+      </div>
+      <p id="objective">Navegue até uma ilha e pegue um amigo.</p>
+    </div>
+
+    <div id="buttons">
+      <button id="mode-button" title="Alternar entre pilotar o barco e mover a câmera">🚤 Barco</button>
+      <button id="sound-button" data-on="true">🔊 Som</button>
+      <button id="help-button">❔ Ajuda</button>
+    </div>
+
+    <canvas id="minimap" width="168" height="168"></canvas>
+
+    <div id="toast" class="hidden"></div>
+
+    <div id="help" class="panel hidden">
+      <h2>Como jogar</h2>
+      <ul>
+        <li><b>W / ↑</b> acelera · <b>S / ↓</b> ré</li>
+        <li><b>A / D</b> ou <b>← →</b> viram o leme</li>
+        <li><b>C</b> troca entre barco e câmera livre</li>
+        <li><b>H</b> toca o sino do barco</li>
+        <li><b>R</b> recoloca a câmera atrás do barco</li>
+        <li>Arraste o mouse para girar a vista e use a rolagem para aproximar</li>
+      </ul>
+      <p>
+        Encoste devagar nas ilhas com o círculo amarelo no mapa para os amigos embarcarem e
+        leve todos até a Ilha da Família Pig (a rosa).
+      </p>
+    </div>
+
+    <div id="touch" class="hidden">
+      <button data-action="left">◀</button>
+      <div class="column">
+        <button data-action="up">▲</button>
+        <button data-action="down">▼</button>
+      </div>
+      <button data-action="right">▶</button>
+    </div>
+
+    <div id="start" class="overlay">
+      <div class="card">
+        <h2>Ilhas da Pepa 🚤</h2>
+        <p>
+          Um mar tranquilo, várias ilhas com casinhas coloridas e o barco do Vovô Pig.
+          Passe em cada ilha para pegar os amigos que estão esperando e leve todos
+          para a festa na Ilha da Família Pig.
+        </p>
+        <p class="small">
+          W/S aceleram · A/D viram · C troca para a câmera livre · H toca o sino
+        </p>
+        <button id="start-button">Zarpar!</button>
+      </div>
+    </div>
+
+    <div id="victory" class="overlay hidden">
+      <div class="card">
+        <h2>Festa completa! 🎉</h2>
+        <p id="victory-text"></p>
+        <button id="restart-button">Passear de novo</button>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
