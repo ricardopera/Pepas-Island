@@ -24,7 +24,8 @@ async function carregarPlaywright() {
 }
 
 import { readFile, mkdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { resolve, dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const { chromium, devices } = await carregarPlaywright();
 
@@ -69,8 +70,18 @@ function contextOptions(shot = {}) {
 
 const erros = [];
 
+// Para cenas three.js: injeta o ajudante antes dos scripts do projeto, o que
+// permite enquadrar objetos sem alterar o código auditado.
+const ajudante3d = config.three
+  ? await readFile(
+      join(dirname(fileURLToPath(import.meta.url)), '..', 'assets', 'auditoria-3d.js'),
+      'utf8'
+    )
+  : null;
+
 async function novaPagina(shot) {
   const context = await browser.newContext(contextOptions(shot));
+  if (ajudante3d) await context.addInitScript(ajudante3d);
   const page = await context.newPage();
   page.on('pageerror', (e) => erros.push(`exceção: ${e.message}`));
   page.on('console', (m) => {
@@ -113,6 +124,15 @@ for (const shot of config.shots ?? []) {
     assinaturaAtual = assinatura;
   }
   const { page } = atual;
+
+  if (shot.frame) {
+    const resultado = await page.evaluate(
+      ({ alvo, opcoes }) => window.__auditoria?.enquadrar(alvo, opcoes) ?? { erro: 'ajudante 3D ausente (falta "three": true no config?)' },
+      { alvo: shot.frame.objeto, opcoes: shot.frame }
+    );
+    if (resultado?.erro) erros.push(`frame de "${shot.name}": ${resultado.erro}`);
+    else console.log(`   ↳ ${resultado.nome} (raio ${resultado.raio}, dist ${resultado.distancia})`);
+  }
 
   if (shot.eval) {
     try {

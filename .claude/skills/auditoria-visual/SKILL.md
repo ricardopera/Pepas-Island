@@ -33,8 +33,18 @@ perto**, como se você fosse fotografar cada peça de um brinquedo separadamente
 Sirva a página (`npm start`, `python -m http.server`, o que o projeto usar) e confirme
 com `curl -s -o /dev/null -w "%{http_code}" http://localhost:PORTA`.
 
-Para cenas 3D você precisa **posicionar a câmera em qualquer objeto**. Se o app não
-expõe nada, adicione um handle de depuração — uma linha no arquivo principal:
+Para cenas 3D você precisa **posicionar a câmera em qualquer objeto**.
+
+Em three.js isso sai de graça: ligue `"three": true` no config e o `shoot.mjs` injeta
+`assets/auditoria-3d.js` antes dos scripts da página. O three.js avisa
+`window.__THREE_DEVTOOLS__` quando cria a cena e o renderer, então o ajudante pega os
+dois **sem alterar uma linha do projeto auditado**. Ele ainda troca a câmera na hora
+de desenhar, em vez de mover a do app — o que faz o enquadramento sobreviver a jogos
+com câmera controlada, que sobrescreveriam a posição no quadro seguinte.
+
+Em qualquer outro motor (ou quando você precisa mexer no estado do app, como trocar
+de fase antes da foto), o caminho é um handle de depuração — uma linha no arquivo
+principal:
 
 ```js
 // Acesso ao estado pelo console do navegador (útil para depurar e testar).
@@ -151,10 +161,36 @@ O `config.json` descreve o alvo e a lista de fotos:
 }
 ```
 
-Cada foto aceita `eval` (código rodado na página — use para mover a câmera 3D),
-`selector` (recorta o elemento do DOM), `viewport` (sobrescreve o global, útil para
-testar celular deitado) e `wait`. O script imprime os erros de console ao final:
-erro de shader e exceção aparecem aqui e explicam muita coisa esquisita.
+Cada foto aceita `frame` (enquadramento automático em three.js), `eval` (código rodado
+na página — para mover a câmera de outros motores ou preparar o estado), `selector`
+(recorta o elemento do DOM), `viewport` (sobrescreve o global, útil para testar celular
+deitado) e `wait`. O script imprime os erros de console ao final: erro de shader e
+exceção aparecem aqui e explicam muita coisa esquisita.
+
+#### Modo three.js, sem tocar no projeto
+
+Com `"three": true` no config, primeiro descubra o que existe na cena:
+
+```bash
+node scripts/shoot.mjs config.json --label mapa --out /tmp/fotos
+# dentro da página: window.__auditoria.listar({ profundidade: 3 })
+```
+
+`listar()` devolve a árvore com um **endereço** por objeto (`"33/4"` = quinto filho do
+34º objeto da cena) — útil justamente porque a maioria dos projetos não dá nome aos
+objetos. Se o projeto nomeia (`objeto.name = 'macieira'`), o nome também serve.
+
+Aí cada foto vira uma linha:
+
+```json
+{ "name": "macieira", "frame": { "objeto": "33/4", "angulo": 0.4 }, "wait": 700 }
+```
+
+`frame` aceita `objeto` (endereço ou nome), `distancia`, `altura` (ambos `"auto"` por
+padrão, derivados do tamanho da peça) e `angulo` em radianos — repita a mesma foto com
+`angulo` diferente para ver a peça de outro lado. Dar nome aos objetos no projeto
+(`grupo.name = 'balanço'`) deixa a auditoria muito mais legível e é um bom hábito de
+qualquer forma.
 
 ### `scripts/ui-overlap.mjs` — sobreposição de interface
 
