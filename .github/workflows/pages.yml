@@ -29,11 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # `enablement` liga o Pages pela API caso ainda esteja desligado.
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
+      # Não usamos `configure-pages`: ele só serve para expor base_url a
+      # geradores de site, e o `enablement` dele não funciona com o
+      # GITHUB_TOKEN (criar o site do Pages exige admin do repositório).
+      # O Pages precisa estar ligado uma vez em Settings → Pages → Source:
+      # GitHub Actions; depois disso este workflow publica sozinho.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
