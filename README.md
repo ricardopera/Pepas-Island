@@ -11,7 +11,16 @@ imagem ou modelo 3D externo no projeto.
 | --- | --- |
 | ![Vista de todas as ilhas](docs/print-arquipelago.png) | ![Passageiro no cais](docs/print-ilha.png) |
 
-## Como jogar
+## Jogar online
+
+**[ricardopera.github.io/Pepas-Island](https://ricardopera.github.io/Pepas-Island/)**
+
+O site é publicado pelo workflow `.github/workflows/pages.yml` a cada push: o
+repositório inteiro é o site, porque o jogo é estático e não precisa de build.
+Para isso funcionar, o repositório precisa ser público e o GitHub Pages precisa
+estar com a origem **GitHub Actions** (Settings → Pages → Source).
+
+## Rodar localmente
 
 ```bash
 npm start          # abre em http://localhost:5173
