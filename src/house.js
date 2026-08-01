@@ -75,30 +75,49 @@ function createAntenna() {
   return group;
 }
 
-/** Trepadeira com flores vermelhas, como na casa rosa da família Pig. */
+/** Trepadeira com flores vermelhas, espalhada pela parede como na casa rosa. */
 function createVine(width, height) {
   const group = new THREE.Group();
-  const stemGeometry = new THREE.CylinderGeometry(0.05, 0.05, height, 5);
-  group.add(mesh(stemGeometry, flat(PALETTE.leafDark), 0, height / 2, 0));
+  const stemMaterial = flat(PALETTE.leafDark);
+  const leafGeometry = new THREE.CircleGeometry(0.17, 7);
+  const flowerGeometry = new THREE.CircleGeometry(0.13, 7);
+  const petalGeometry = new THREE.CircleGeometry(0.05, 6);
 
-  const leafGeometry = new THREE.CircleGeometry(0.16, 6);
-  const flowerGeometry = new THREE.CircleGeometry(0.11, 6);
-  const branches = 6;
-  for (let i = 0; i < branches; i++) {
-    const t = i / (branches - 1);
-    const y = 0.35 + t * (height - 0.6);
-    const x = (i % 2 ? 1 : -1) * (0.25 + t * width * 0.42);
-    const branch = mesh(
-      new THREE.CylinderGeometry(0.035, 0.035, Math.abs(x) * 1.1, 5),
-      flat(PALETTE.leafDark),
-      x / 2,
-      y,
-      0
-    );
-    branch.rotation.z = Math.PI / 2 - Math.sign(x) * 0.35;
-    group.add(branch);
-    group.add(mesh(leafGeometry, flat(PALETTE.leaf), x * 0.6, y + 0.16, 0.03));
-    group.add(mesh(flowerGeometry, flat(PALETTE.flowerRed), x, y + 0.05, 0.04));
+  // Dois ramos que sobem serpenteando, em vez de uma haste reta.
+  for (const lado of [-1, 1]) {
+    const passos = 7;
+    for (let i = 0; i < passos; i++) {
+      const t = i / (passos - 1);
+      const y = t * height;
+      const x = lado * Math.sin(t * 2.4) * width * 0.5;
+      const proximoY = ((i + 1) / (passos - 1)) * height;
+      const proximoX = lado * Math.sin(((i + 1) / (passos - 1)) * 2.4) * width * 0.5;
+      if (i < passos - 1) {
+        const dx = proximoX - x;
+        const dy = proximoY - y;
+        const trecho = mesh(
+          new THREE.CylinderGeometry(0.045, 0.045, Math.hypot(dx, dy), 5),
+          stemMaterial,
+          x + dx / 2,
+          y + dy / 2,
+          0
+        );
+        trecho.rotation.z = Math.atan2(-dx, dy);
+        group.add(trecho);
+      }
+
+      // Folhas de um lado e outro do ramo, e uma flor a cada dois passos.
+      for (const desvio of [-1, 1]) {
+        const folha = mesh(leafGeometry, flat(desvio > 0 ? PALETTE.leaf : PALETTE.leafDark), x + desvio * 0.22, y + 0.08, 0.03);
+        folha.rotation.z = desvio * 0.6;
+        folha.scale.set(1, 0.7, 1);
+        group.add(folha);
+      }
+      if (i % 2 === 1) {
+        group.add(mesh(flowerGeometry, flat(PALETTE.flowerRed), x + lado * 0.3, y, 0.05));
+        group.add(mesh(petalGeometry, flat(PALETTE.flowerYellow), x + lado * 0.3, y, 0.06));
+      }
+    }
   }
   return group;
 }

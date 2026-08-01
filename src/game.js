@@ -3,6 +3,7 @@ import { PALETTE } from './palette.js';
 import { flat, unlit, mesh } from './materials.js';
 import { createIsland, placeCharacter, makeRng } from './island.js';
 import { updateCharacter } from './character.js';
+import { updateSwing } from './props.js';
 
 const HOME_NAME = 'Ilha da Família Pig';
 const WORLD_POSITION = new THREE.Vector3();
@@ -248,6 +249,10 @@ export class Game {
             camera.position.z - WORLD_POSITION.z
           ) - character.rotation.y;
       }
+    }
+
+    for (const island of this.islands) {
+      if (island.userData.swing) updateSwing(island.userData.swing, time);
     }
 
     if (this.finished) return;

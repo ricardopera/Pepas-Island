@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { PALETTE } from './palette.js';
 import { flat, unlit, mesh } from './materials.js';
 
-export const WATER_SIZE = 900;
+export const WATER_SIZE = 1600;
 
 /** Altura das ondas — a mesma fórmula roda no shader e aqui, para o barco boiar certo. */
 export function waveHeight(x, z, time) {
@@ -56,7 +56,7 @@ const waterFragmentShader = /* glsl */ `
     color = mix(color, vec3(0.80, 0.91, 0.99), crest * 0.25);
 
     // O mar clareia perto do horizonte para encontrar o céu.
-    float horizon = smoothstep(160.0, 430.0, length(vLocal));
+    float horizon = smoothstep(170.0, 520.0, length(vLocal));
     color = mix(color, vec3(0.58, 0.80, 0.91), horizon);
 
     gl_FragColor = vec4(color, 1.0);
@@ -64,7 +64,7 @@ const waterFragmentShader = /* glsl */ `
 `;
 
 export function createWater() {
-  const geometry = new THREE.PlaneGeometry(WATER_SIZE, WATER_SIZE, 180, 180);
+  const geometry = new THREE.PlaneGeometry(WATER_SIZE, WATER_SIZE, 200, 200);
   geometry.rotateX(-Math.PI / 2);
   const material = new THREE.ShaderMaterial({
     uniforms: {
@@ -101,7 +101,7 @@ const skyFragmentShader = /* glsl */ `
 `;
 
 export function createSky() {
-  const geometry = new THREE.SphereGeometry(600, 24, 16);
+  const geometry = new THREE.SphereGeometry(700, 40, 24);
   const material = new THREE.ShaderMaterial({
     uniforms: {
       uTop: { value: new THREE.Color(PALETTE.skyTop) },
@@ -156,9 +156,9 @@ export function createClouds(count = 14, rng = Math.random) {
       const puff = mesh(
         geometry,
         material,
-        (p - (puffs - 1) / 2) * 7 + (rng() - 0.5) * 3,
-        (rng() - 0.5) * 2.5,
-        (rng() - 0.5) * 2
+        (p - (puffs - 1) / 2) * 7 + (rng() - 0.5) * 2,
+        rng() * 2.2,
+        (rng() - 0.5) * 1.5
       );
       const size = 6 + rng() * 4;
       puff.scale.set(size, size * 0.68, size * 0.7);

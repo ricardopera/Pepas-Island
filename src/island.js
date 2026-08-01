@@ -49,15 +49,22 @@ export function createIsland(config) {
   dome.receiveShadow = true;
   island.add(dome);
 
-  // Base submersa, para a ilha não parecer um adesivo sobre a água.
-  const base = mesh(
-    new THREE.CylinderGeometry(radius, radius * 0.82, 6, 40),
-    flat(PALETTE.grassDark),
-    0,
-    -3,
-    0
+  // Faixa de grama logo abaixo da linha d'água: quando a onda baixa, o que
+  // aparece continua sendo verde de grama, e não a base escura.
+  island.add(
+    mesh(new THREE.CylinderGeometry(radius, radius * 0.99, 1.4, 40), flat(PALETTE.grass), 0, -0.7, 0)
   );
-  island.add(base);
+
+  // Base submersa, para a ilha não parecer um adesivo sobre a água.
+  island.add(
+    mesh(
+      new THREE.CylinderGeometry(radius * 0.99, radius * 0.82, 6, 40),
+      flat(PALETTE.grassDark),
+      0,
+      -4.2,
+      0
+    )
+  );
 
   island.add(createFlowerPatch(radius * 0.85, 30, rng));
 
@@ -86,7 +93,7 @@ export function createIsland(config) {
 
   for (let i = 0; i < bushes; i++) {
     const angle = rng() * Math.PI * 2;
-    const distance = radius * (0.5 + rng() * 0.3);
+    const distance = radius * (0.64 + rng() * 0.24);
     const bush = createBush(0.8 + rng() * 0.5);
     bush.position.set(
       Math.sin(angle) * distance,

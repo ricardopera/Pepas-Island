@@ -38,8 +38,8 @@ function createHull() {
   // [y, escalaX, escalaZ, materialDaFaixaAbaixo]
   const rings = [
     [GUNWALE, 1.0, 1.0, 0],
-    [0.95, 1.0, 1.0, 0],
-    [0.6, 1.0, 1.0, 1],
+    [0.88, 1.0, 1.0, 0],
+    [0.68, 1.0, 1.0, 1],
     [0.05, 1.0, 1.0, 2],
   ];
   const roundedRings = 6;
@@ -116,8 +116,8 @@ function createHull() {
 
 function createPorthole() {
   const group = new THREE.Group();
-  group.add(mesh(new THREE.CircleGeometry(0.26, 14), flat(PALETTE.hullStripe)));
-  group.add(mesh(new THREE.CircleGeometry(0.19, 14), flat(PALETTE.porthole), 0, 0, 0.01));
+  group.add(mesh(new THREE.RingGeometry(0.19, 0.27, 18), flat(PALETTE.hullStripe), 0, 0, 0.01));
+  group.add(mesh(new THREE.CircleGeometry(0.2, 18), flat(PALETTE.porthole)));
   return group;
 }
 

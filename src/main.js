@@ -23,7 +23,7 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x9ad5ef);
-scene.fog = new THREE.Fog(0xb6e2f2, 340, 640);
+scene.fog = new THREE.Fog(0xb6e2f2, 360, 720);
 
 const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.5, 1400);
 camera.position.set(0, 16, 40);

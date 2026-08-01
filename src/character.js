@@ -120,53 +120,71 @@ export function createCharacter(options = {}) {
   const body = new THREE.Group();
   root.add(body);
 
-  const bodyHeight = adult ? 0.95 : 0.62;
-  const bodyRadius = adult ? 0.62 : 0.42;
+  // Proporções do desenho: cabeça grande, corpo curto e pernas curtinhas — mas
+  // com braços e pernas para fora da silhueta, senão a bolha do corpo os engole.
+  const legHeight = adult ? 0.36 : 0.3;
+  const bodyRadius = adult ? 0.6 : 0.42;
+  const torsoHeight = adult ? 1.12 : 0.8;
+  const torsoY = legHeight + torsoHeight / 2;
+  const headRadius = adult ? 0.5 : 0.46;
 
-  // Corpo: barriga redonda nos adultos, vestido em sino nas crianças.
   const torso = adult
-    ? mesh(new THREE.SphereGeometry(bodyRadius, 14, 10), flat(clothes), 0, bodyHeight * 0.62, 0)
+    ? mesh(new THREE.SphereGeometry(bodyRadius, 16, 12), flat(clothes), 0, torsoY, 0)
     : mesh(
-        new THREE.CylinderGeometry(bodyRadius * 0.62, bodyRadius, bodyHeight, 14),
+        new THREE.CylinderGeometry(bodyRadius * 0.6, bodyRadius, torsoHeight, 16),
         flat(clothes),
         0,
-        bodyHeight * 0.6,
+        torsoY,
         0
       );
-  if (adult) torso.scale.set(1, 0.95, 0.88);
+  if (adult) torso.scale.set(1.04, torsoHeight / (bodyRadius * 2), 0.86);
   body.add(torso);
 
-  // Pernas e sapatos.
-  const legGeometry = new THREE.CylinderGeometry(0.075, 0.075, adult ? 0.34 : 0.28, 6);
-  const shoeGeometry = new THREE.SphereGeometry(0.15, 8, 6);
+  // Pernas e sapatos, abaixo do corpo.
+  const legGeometry = new THREE.CylinderGeometry(0.08, 0.08, legHeight, 7);
+  const shoeGeometry = new THREE.SphereGeometry(0.16, 9, 7);
   for (const sx of [-1, 1]) {
-    const legX = sx * bodyRadius * 0.42;
-    body.add(mesh(legGeometry, flat(skinColor), legX, adult ? 0.18 : 0.14, 0));
-    const shoe = mesh(shoeGeometry, flat(shoes), legX, 0.08, 0.05);
-    shoe.scale.set(0.85, 0.6, 1.25);
+    const legX = sx * bodyRadius * 0.4;
+    body.add(mesh(legGeometry, flat(skinColor), legX, legHeight / 2, 0));
+    const shoe = mesh(shoeGeometry, flat(shoes), legX, 0.09, 0.06);
+    shoe.scale.set(0.85, 0.62, 1.3);
     body.add(shoe);
   }
 
-  // Braços: pivô no ombro para poder acenar.
-  const armGeometry = new THREE.CylinderGeometry(0.055, 0.055, 0.46, 6);
+  // Braços: pivô no ombro, abertos o bastante para aparecerem de qualquer ângulo.
+  const armGeometry = new THREE.CylinderGeometry(0.06, 0.06, 0.5, 7);
   const arms = [];
   for (const sx of [-1, 1]) {
     const pivot = new THREE.Group();
-    pivot.position.set(sx * bodyRadius * 0.92, bodyHeight * (adult ? 0.82 : 0.9), 0);
-    const arm = mesh(armGeometry, flat(skinColor), 0, -0.23, 0);
+    pivot.position.set(sx * bodyRadius * 1.06, torsoY + torsoHeight * 0.2, 0.04);
+    const arm = mesh(armGeometry, flat(skinColor), 0, -0.25, 0);
     pivot.add(arm);
-    pivot.add(mesh(new THREE.SphereGeometry(0.085, 8, 6), flat(skinColor), 0, -0.46, 0));
-    pivot.rotation.z = sx * -0.35;
+    pivot.add(mesh(new THREE.SphereGeometry(0.09, 8, 6), flat(skinColor), 0, -0.5, 0));
+    pivot.rotation.z = sx * -0.72;
     body.add(pivot);
     arms.push(pivot);
   }
 
+  // Rabinho enrolado dos porquinhos.
+  if (species === 'pig') {
+    const tail = mesh(
+      new THREE.TorusGeometry(0.1, 0.035, 6, 12, Math.PI * 1.5),
+      flat(skinColor),
+      0,
+      torsoY + 0.05,
+      -bodyRadius * 0.88
+    );
+    tail.rotation.y = Math.PI / 2;
+    body.add(tail);
+  }
+
   // Cabeça.
   const head = new THREE.Group();
-  head.position.set(0, bodyHeight + (adult ? 0.62 : 0.5), 0);
+  head.position.set(0, legHeight + torsoHeight + headRadius * 0.66, 0);
+  head.scale.setScalar(headRadius / 0.46);
   body.add(head);
 
-  const skull = mesh(new THREE.SphereGeometry(0.46, 16, 12), flat(skinColor));
+  const skull = mesh(new THREE.SphereGeometry(0.46, 18, 14), flat(skinColor));
   skull.scale.set(1.12, 1, 0.94);
   head.add(skull);
 
@@ -215,7 +233,7 @@ export function createCharacter(options = {}) {
     body,
     phase: Math.random() * Math.PI * 2,
     waving: 0,
-    height: (bodyHeight + (adult ? 1.2 : 1.0)) * scale,
+    height: (legHeight + torsoHeight + headRadius * 1.7) * scale,
   };
 
   return root;

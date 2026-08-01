@@ -34,6 +34,22 @@ export function mesh(geometry, material, x = 0, y = 0, z = 0) {
   return m;
 }
 
+/** Barra ligando dois pontos: evita ter de calcular ângulo a ângulo. */
+export function beam(from, to, radius, material, segments = 7) {
+  const direction = new THREE.Vector3().subVectors(to, from);
+  const length = direction.length();
+  const bar = new THREE.Mesh(
+    new THREE.CylinderGeometry(radius, radius, length, segments),
+    material
+  );
+  bar.position.copy(from).addScaledVector(direction, 0.5);
+  bar.quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    direction.normalize()
+  );
+  return bar;
+}
+
 // Retângulo com cantos arredondados: base de quase todas as formas do desenho.
 export function roundedRectShape(width, height, radius) {
   const w = width / 2;
