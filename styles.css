@@ -195,29 +195,79 @@ button:active {
 
 #touch {
   position: fixed;
-  left: 14px;
-  bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  left: 18px;
+  bottom: 18px;
   z-index: 5;
 }
 
-#touch .column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* Analógico: a base fica parada e a manopla segue o dedo. */
+#joystick {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.42);
+  border: 5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: var(--sombra);
+  touch-action: none;
+  cursor: grab;
 }
 
-#touch button {
-  width: 66px;
-  height: 58px;
-  font-size: 1.3rem;
-  background: rgba(255, 255, 255, 0.9);
+#joystick.active {
+  background: rgba(255, 255, 255, 0.6);
+  cursor: grabbing;
 }
 
-#touch button.pressed {
+#joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 62px;
+  height: 62px;
+  margin: -31px 0 0 -31px;
+  border-radius: 50%;
   background: var(--amarelo);
+  border: 4px solid #ffffff;
+  box-shadow: 0 4px 0 rgba(44, 59, 87, 0.22);
+  pointer-events: none;
+}
+
+#joystick.active #joystick-knob {
+  background: #ffe98a;
+}
+
+/* Setinhas de referência ao redor da base. */
+#joystick .hint {
+  position: absolute;
+  color: var(--azul);
+  opacity: 0.5;
+  font-size: 0.85rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+#joystick .hint-up {
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#joystick .hint-down {
+  bottom: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#joystick .hint-left {
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#joystick .hint-right {
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .hidden {
@@ -246,5 +296,30 @@ button:active {
   #buttons button {
     font-size: 0.8rem;
     padding: 8px 10px;
+  }
+
+  #joystick {
+    width: 124px;
+    height: 124px;
+  }
+
+  #joystick-knob {
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 -27px;
+  }
+
+  /* Em tela estreita o balão desceria em cima do painel de missão. */
+  #toast {
+    top: auto;
+    bottom: 186px;
+    font-size: 0.9rem;
+  }
+
+  #help {
+    left: 14px;
+    right: 14px;
+    bottom: 186px;
+    max-width: none;
   }
 }

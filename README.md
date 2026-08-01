@@ -49,7 +49,12 @@ acontecer a festa.
 | `R` | recoloca a câmera atrás do barco |
 
 O mouse gira a vista (arrastar) e aproxima (rolagem) nos dois modos. No modo câmera
-livre, `WASD` desliza a vista sobre o mar. No celular aparecem botões grandes na tela.
+livre, `WASD` desliza a vista sobre o mar.
+
+No celular aparece um analógico no canto inferior esquerdo: arraste a manopla na
+direção do movimento. Ele é proporcional — perto do centro o barco anda devagar e
+faz curvas abertas, no limite da borda vai a toda. Serve aos dois modos: pilota o
+barco ou desliza a câmera.
 
 ## Os dois modos
 
@@ -75,6 +80,7 @@ src/
   boat.js           o barco, a tripulação, a espuma e a física da navegação
   controls.js       entrada de teclado/toque e as duas câmeras
   hud.js            painel de missão, mensagens e minimapa
+  joystick.js       analógico de toque (arrasto proporcional)
   audio.js          efeitos sonoros sintetizados no navegador
   materials.js      materiais chapados reaproveitados e formas utilitárias
   textures.js       texturas geradas em canvas (telhas, bandeira pirata)

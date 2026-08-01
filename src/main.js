@@ -58,12 +58,16 @@ let game = new Game(scene, boat, hud, sound);
 function setMode(mode) {
   rig.setMode(mode, boat);
   hud.setMode(mode);
-  hud.toast(
-    mode === 'boat'
-      ? 'Modo barco: W/S aceleram, A/D viram o leme.'
+  // A dica muda conforme o jogador esteja no teclado ou no analógico.
+  const dicas = {
+    boat: hud.touch
+      ? 'Modo barco: arraste o analógico para navegar.'
+      : 'Modo barco: W/S aceleram, A/D viram o leme.',
+    free: hud.touch
+      ? 'Modo câmera: arraste a tela para girar e o analógico para deslizar.'
       : 'Modo câmera: arraste para girar, role para aproximar, WASD desliza.',
-    3.5
-  );
+  };
+  hud.toast(dicas[mode], 3.5);
 }
 
 function resetGame() {
@@ -77,7 +81,7 @@ function resetGame() {
 }
 
 hud.bindHelp();
-hud.bindTouch(input);
+hud.bindJoystick(input);
 hud.setMode('boat');
 hud.onModeToggle(() => setMode(rig.mode === 'boat' ? 'free' : 'boat'));
 hud.onSoundToggle((enabled) => sound.setEnabled(enabled));

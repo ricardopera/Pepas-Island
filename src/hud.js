@@ -1,3 +1,5 @@
+import { Joystick } from './joystick.js';
+
 // O arquipélago cabe num círculo de ~220 unidades; o mapa usa essa escala.
 const WORLD_RADIUS = 220;
 
@@ -53,32 +55,20 @@ export class Hud {
     });
   }
 
-  /** Botões grandes para jogar no celular. */
-  bindTouch(input) {
-    for (const button of this.touchPanel.querySelectorAll('[data-action]')) {
-      const action = button.dataset.action;
-      const press = (event) => {
-        event.preventDefault();
-        input.setVirtual(action, true);
-        button.classList.add('pressed');
-      };
-      const release = () => {
-        input.setVirtual(action, false);
-        button.classList.remove('pressed');
-      };
-      button.addEventListener('pointerdown', press);
-      button.addEventListener('pointerup', release);
-      button.addEventListener('pointerleave', release);
-      button.addEventListener('pointercancel', release);
-    }
-    if (window.matchMedia('(hover: none)').matches) {
-      this.touchPanel.classList.remove('hidden');
-    }
+  /** Analógico de toque: arrastar a manopla vira acelerador e leme. */
+  bindJoystick(input) {
+    this.joystick = new Joystick(
+      document.getElementById('joystick'),
+      document.getElementById('joystick-knob'),
+      (x, y) => input.setAxis(x, y)
+    );
+    this.touch = window.matchMedia('(hover: none)').matches;
+    if (this.touch) this.touchPanel.classList.remove('hidden');
   }
 
   setMode(mode) {
+    // O analógico serve aos dois modos: pilota o barco ou desliza a câmera.
     this.modeButton.textContent = mode === 'boat' ? '🚤 Barco' : '🎥 Câmera';
-    this.touchPanel.classList.toggle('camera-mode', mode === 'free');
   }
 
   setCounts(aboard, delivered, total) {

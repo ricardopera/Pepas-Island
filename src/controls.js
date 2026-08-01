@@ -14,11 +14,13 @@ const KEY_MAP = {
   KeyE: 'rollRight',
 };
 
-/** Teclado + botões na tela, resumidos em acelerador e leme. */
+/** Teclado + analógico de toque, resumidos em acelerador e leme. */
 export class Input {
   constructor() {
     this.keys = new Set();
-    this.virtual = new Set();
+    // Eixos do analógico: x = leme, y = acelerador (positivo é para trás).
+    this.axisX = 0;
+    this.axisY = 0;
     this.throttle = 0;
     this.steer = 0;
     this.listeners = {};
@@ -49,18 +51,30 @@ export class Input {
     for (const callback of this.listeners[event] ?? []) callback(payload);
   }
 
-  setVirtual(action, active) {
-    if (active) this.virtual.add(action);
-    else this.virtual.delete(action);
+  setAxis(x, y) {
+    this.axisX = x;
+    this.axisY = y;
   }
 
   active(action) {
-    return this.keys.has(action) || this.virtual.has(action);
+    return this.keys.has(action);
+  }
+
+  /** Direção horizontal pedida: teclado e analógico somam, com limite em 1. */
+  moveX() {
+    const keys = (this.active('right') ? 1 : 0) - (this.active('left') ? 1 : 0);
+    return THREE.MathUtils.clamp(keys + this.axisX, -1, 1);
+  }
+
+  /** Positivo é para trás (tecla S / analógico puxado para baixo). */
+  moveY() {
+    const keys = (this.active('down') ? 1 : 0) - (this.active('up') ? 1 : 0);
+    return THREE.MathUtils.clamp(keys + this.axisY, -1, 1);
   }
 
   update(dt) {
-    const targetThrottle = (this.active('up') ? 1 : 0) - (this.active('down') ? 1 : 0);
-    const targetSteer = (this.active('right') ? 1 : 0) - (this.active('left') ? 1 : 0);
+    const targetThrottle = -this.moveY();
+    const targetSteer = this.moveX();
     const rate = Math.min(1, dt * 8);
     this.throttle += (targetThrottle - this.throttle) * rate;
     this.steer += (targetSteer - this.steer) * rate;
@@ -154,22 +168,19 @@ export class CameraRig {
         );
       }
     } else {
-      // No modo câmera, WASD desliza a vista sobre o mar.
-      const move = new THREE.Vector3(
-        (input.active('right') ? 1 : 0) - (input.active('left') ? 1 : 0),
-        0,
-        (input.active('down') ? 1 : 0) - (input.active('up') ? 1 : 0)
-      );
+      // No modo câmera, o teclado ou o analógico deslizam a vista sobre o mar.
+      const move = new THREE.Vector3(input.moveX(), 0, input.moveY());
       if (move.lengthSq() > 0) {
         const forward = new THREE.Vector3();
         this.camera.getWorldDirection(forward);
         forward.y = 0;
         forward.normalize();
         const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0));
+        // clampLength em vez de normalize: o analógico continua proporcional.
         const step = new THREE.Vector3()
           .addScaledVector(right, move.x)
           .addScaledVector(forward, -move.z)
-          .normalize()
+          .clampLength(0, 1)
           .multiplyScalar(this.panSpeed * dt);
         this.camera.position.add(step);
         this.controls.target.add(step);

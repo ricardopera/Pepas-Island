@@ -49,6 +49,7 @@
         <li><b>H</b> toca o sino do barco</li>
         <li><b>R</b> recoloca a câmera atrás do barco</li>
         <li>Arraste o mouse para girar a vista e use a rolagem para aproximar</li>
+        <li>No celular, arraste o analógico do canto inferior esquerdo</li>
       </ul>
       <p>
         Encoste devagar nas ilhas com o círculo amarelo no mapa para os amigos embarcarem e
@@ -57,12 +58,13 @@
     </div>
 
     <div id="touch" class="hidden">
-      <button data-action="left">◀</button>
-      <div class="column">
-        <button data-action="up">▲</button>
-        <button data-action="down">▼</button>
+      <div id="joystick" role="application" aria-label="Analógico do barco">
+        <span class="hint hint-up">▲</span>
+        <span class="hint hint-down">▼</span>
+        <span class="hint hint-left">◀</span>
+        <span class="hint hint-right">▶</span>
+        <div id="joystick-knob"></div>
       </div>
-      <button data-action="right">▶</button>
     </div>
 
     <div id="start" class="overlay">
