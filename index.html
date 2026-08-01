@@ -22,17 +22,21 @@
 
     <!-- Painel de missão -->
     <div id="hud">
-      <h1>Ilhas da Pepa</h1>
-      <div class="stats">
-        <span class="chip">🧍 A bordo: <b id="aboard">0</b></span>
-        <span class="chip">🎉 Na festa: <b id="delivered">0/6</b></span>
+      <button id="hud-toggle" title="Recolher o painel" aria-expanded="true">▾</button>
+      <div id="hud-body">
+        <h1>Ilhas da Pepa</h1>
+        <div class="stats">
+          <span class="chip">🧍 A bordo: <b id="aboard">0</b></span>
+          <span class="chip">🎉 Na festa: <b id="delivered">0/6</b></span>
+        </div>
+        <p id="objective">Navegue até uma ilha e pegue um amigo.</p>
       </div>
-      <p id="objective">Navegue até uma ilha e pegue um amigo.</p>
     </div>
 
     <div id="buttons">
       <button id="mode-button" title="Alternar entre pilotar o barco e mover a câmera">🚤 Barco</button>
       <button id="sound-button" data-on="true">🔊 Som</button>
+      <button id="fullscreen-button">⛶ Tela cheia</button>
       <button id="help-button">❔ Ajuda</button>
     </div>
 

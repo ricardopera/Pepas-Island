@@ -81,6 +81,8 @@ function resetGame() {
 }
 
 hud.bindHelp();
+hud.bindPanelToggle();
+hud.bindFullscreen();
 hud.bindJoystick(input);
 hud.setMode('boat');
 hud.onModeToggle(() => setMode(rig.mode === 'boat' ? 'free' : 'boat'));

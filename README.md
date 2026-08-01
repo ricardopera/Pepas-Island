@@ -48,6 +48,10 @@ acontecer a festa.
 | `H` | toca o sino do barco |
 | `R` | recoloca a câmera atrás do barco |
 
+O botão `▾` no canto do painel de missão recolhe o painel quando ele atrapalha a
+vista, e `⛶ Tela cheia` põe o jogo em tela cheia (o botão some sozinho nos
+navegadores sem a API, como o do iPhone).
+
 O mouse gira a vista (arrastar) e aproxima (rolagem) nos dois modos. No modo câmera
 livre, `WASD` desliza a vista sobre o mar.
 

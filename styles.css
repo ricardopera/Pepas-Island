@@ -42,6 +42,46 @@ body {
   pointer-events: none;
 }
 
+#hud-body {
+  /* Espaço para o botão de recolher não cair em cima do texto. */
+  padding-right: 24px;
+}
+
+#hud-toggle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 0.8rem;
+  border-radius: 50%;
+  background: var(--azul-claro);
+  box-shadow: none;
+  pointer-events: auto;
+}
+
+/* Recolhido: sobra só um botãozinho, liberando a tela para o jogo. */
+#hud.collapsed {
+  padding: 0;
+  max-width: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+#hud.collapsed #hud-body {
+  display: none;
+}
+
+#hud.collapsed #hud-toggle {
+  position: static;
+  width: 46px;
+  height: 46px;
+  font-size: 1.15rem;
+  background: #ffffff;
+  box-shadow: var(--sombra);
+}
+
 #hud h1 {
   margin: 0 0 6px;
   font-size: 1.25rem;
@@ -272,6 +312,61 @@ button:active {
 
 .hidden {
   display: none !important;
+}
+
+/* Celular deitado: tela baixa e larga — encolhe tudo e põe os botões em linha,
+   senão o painel cobre o analógico e o minimapa engole os botões. */
+@media (max-height: 520px) {
+  #hud {
+    max-width: 44vw;
+    padding: 8px 12px;
+  }
+
+  #hud h1 {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+
+  #objective {
+    font-size: 0.75rem;
+    margin-top: 5px;
+  }
+
+  #buttons {
+    flex-direction: row;
+  }
+
+  #buttons button {
+    font-size: 0.78rem;
+    padding: 7px 9px;
+  }
+
+  #minimap {
+    width: 104px;
+    height: 104px;
+    border-width: 4px;
+  }
+
+  #joystick {
+    width: 116px;
+    height: 116px;
+  }
+
+  #joystick-knob {
+    width: 50px;
+    height: 50px;
+    margin: -25px 0 0 -25px;
+  }
+
+  #touch {
+    left: 12px;
+    bottom: 12px;
+  }
+
+  .panel {
+    max-width: 44vw;
+    font-size: 0.78rem;
+  }
 }
 
 @media (max-width: 620px) {

@@ -17,6 +17,9 @@ export class Hud {
     this.victoryPanel = document.getElementById('victory');
     this.startPanel = document.getElementById('start');
     this.touchPanel = document.getElementById('touch');
+    this.panel = document.getElementById('hud');
+    this.panelToggle = document.getElementById('hud-toggle');
+    this.fullscreenButton = document.getElementById('fullscreen-button');
     this.minimap = document.getElementById('minimap');
     this.minimapContext = this.minimap.getContext('2d');
     this.toastTimer = 0;
@@ -47,6 +50,43 @@ export class Hud {
       this.victoryPanel.classList.add('hidden');
       callback();
     });
+  }
+
+  /** Recolhe o painel de missão, que em tela pequena cobre o analógico. */
+  bindPanelToggle() {
+    this.panelToggle.addEventListener('click', () => {
+      const collapsed = this.panel.classList.toggle('collapsed');
+      this.panelToggle.textContent = collapsed ? 'ℹ️' : '▾';
+      this.panelToggle.title = collapsed ? 'Mostrar o painel' : 'Recolher o painel';
+      this.panelToggle.setAttribute('aria-expanded', String(!collapsed));
+    });
+  }
+
+  /** Tela cheia: alguns navegadores (iPhone) não têm a API, aí o botão some. */
+  bindFullscreen() {
+    const root = document.documentElement;
+    const request = root.requestFullscreen ?? root.webkitRequestFullscreen;
+    if (!request) {
+      this.fullscreenButton.classList.add('hidden');
+      return;
+    }
+
+    const isFullscreen = () =>
+      Boolean(document.fullscreenElement ?? document.webkitFullscreenElement);
+
+    this.fullscreenButton.addEventListener('click', () => {
+      if (isFullscreen()) {
+        (document.exitFullscreen ?? document.webkitExitFullscreen).call(document);
+      } else {
+        request.call(root);
+      }
+    });
+
+    const sync = () => {
+      this.fullscreenButton.textContent = isFullscreen() ? '⛶ Sair' : '⛶ Tela cheia';
+    };
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
   }
 
   bindHelp() {
