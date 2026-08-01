@@ -81,7 +81,6 @@ function resetGame() {
 }
 
 hud.bindHelp();
-hud.bindPanelToggle();
 hud.bindFullscreen();
 hud.bindJoystick(input);
 hud.setMode('boat');

@@ -17,8 +17,6 @@ export class Hud {
     this.victoryPanel = document.getElementById('victory');
     this.startPanel = document.getElementById('start');
     this.touchPanel = document.getElementById('touch');
-    this.panel = document.getElementById('hud');
-    this.panelToggle = document.getElementById('hud-toggle');
     this.fullscreenButton = document.getElementById('fullscreen-button');
     this.minimap = document.getElementById('minimap');
     this.minimapContext = this.minimap.getContext('2d');
@@ -52,17 +50,11 @@ export class Hud {
     });
   }
 
-  /** Recolhe o painel de missão, que em tela pequena cobre o analógico. */
-  bindPanelToggle() {
-    this.panelToggle.addEventListener('click', () => {
-      const collapsed = this.panel.classList.toggle('collapsed');
-      this.panelToggle.textContent = collapsed ? 'ℹ️' : '▾';
-      this.panelToggle.title = collapsed ? 'Mostrar o painel' : 'Recolher o painel';
-      this.panelToggle.setAttribute('aria-expanded', String(!collapsed));
-    });
-  }
-
-  /** Tela cheia: alguns navegadores (iPhone) não têm a API, aí o botão some. */
+  /**
+   * Tela cheia. A API não existe em todo navegador e é bloqueada dentro dos
+   * navegadores embutidos de apps (o do Google, do WhatsApp, as Custom Tabs do
+   * Chrome). Nesses casos o pedido é recusado em silêncio, então avisamos.
+   */
   bindFullscreen() {
     const root = document.documentElement;
     const request = root.requestFullscreen ?? root.webkitRequestFullscreen;
@@ -77,8 +69,22 @@ export class Hud {
     this.fullscreenButton.addEventListener('click', () => {
       if (isFullscreen()) {
         (document.exitFullscreen ?? document.webkitExitFullscreen).call(document);
-      } else {
-        request.call(root);
+        return;
+      }
+      const recusado = () =>
+        this.toast(
+          'Este navegador não deixou entrar em tela cheia. Abra o link no Chrome ou use "Adicionar à tela inicial".',
+          6
+        );
+      try {
+        const resultado = request.call(root, { navigationUI: 'hide' });
+        if (resultado?.catch) resultado.catch(recusado);
+        // Alguns navegadores resolvem a promessa e não mudam nada.
+        setTimeout(() => {
+          if (!isFullscreen()) recusado();
+        }, 800);
+      } catch {
+        recusado();
       }
     });
 

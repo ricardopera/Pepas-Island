@@ -48,9 +48,13 @@ acontecer a festa.
 | `H` | toca o sino do barco |
 | `R` | recoloca a câmera atrás do barco |
 
-O botão `▾` no canto do painel de missão recolhe o painel quando ele atrapalha a
-vista, e `⛶ Tela cheia` põe o jogo em tela cheia (o botão some sozinho nos
-navegadores sem a API, como o do iPhone).
+O texto da missão fica direto sobre a cena, sem caixa, para ocupar o mínimo da tela.
+
+O botão `⛶ Tela cheia` usa a API de fullscreen, que **não funciona dentro dos
+navegadores embutidos de aplicativos** (o do Google, o do WhatsApp, as Custom Tabs
+do Chrome) — nesses casos o jogo avisa na tela. Para tela cheia de verdade no
+Android, use "Adicionar à tela inicial": o `manifest.webmanifest` declara
+`display: fullscreen`, então o atalho abre sem nenhuma barra do navegador.
 
 O mouse gira a vista (arrastar) e aproxima (rolagem) nos dois modos. No modo câmera
 livre, `WASD` desliza a vista sobre o mar.

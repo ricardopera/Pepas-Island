@@ -30,82 +30,39 @@ body {
   touch-action: none;
 }
 
+/* Sem caixa: o texto fica direto sobre a cena, pequeno, com sombra para
+   continuar legível tanto no azul do mar quanto no verde das ilhas. */
 #hud {
   position: fixed;
-  top: 14px;
+  top: 10px;
   left: 14px;
-  max-width: min(340px, 60vw);
-  padding: 12px 16px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: var(--sombra);
+  max-width: min(300px, 52vw);
+  color: #ffffff;
+  text-shadow: 0 2px 5px rgba(16, 44, 82, 0.75), 0 0 2px rgba(16, 44, 82, 0.9);
   pointer-events: none;
 }
 
-#hud-body {
-  /* Espaço para o botão de recolher não cair em cima do texto. */
-  padding-right: 24px;
-}
-
-#hud-toggle {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  font-size: 0.8rem;
-  border-radius: 50%;
-  background: var(--azul-claro);
-  box-shadow: none;
-  pointer-events: auto;
-}
-
-/* Recolhido: sobra só um botãozinho, liberando a tela para o jogo. */
-#hud.collapsed {
-  padding: 0;
-  max-width: none;
-  background: transparent;
-  box-shadow: none;
-}
-
-#hud.collapsed #hud-body {
-  display: none;
-}
-
-#hud.collapsed #hud-toggle {
-  position: static;
-  width: 46px;
-  height: 46px;
-  font-size: 1.15rem;
-  background: #ffffff;
-  box-shadow: var(--sombra);
-}
-
 #hud h1 {
-  margin: 0 0 6px;
-  font-size: 1.25rem;
-  color: var(--azul);
+  margin: 0 0 3px;
+  font-size: 1rem;
+  color: #ffffff;
   letter-spacing: 0.02em;
 }
 
 .stats {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .chip {
-  background: var(--azul-claro);
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   white-space: nowrap;
 }
 
 #objective {
-  margin: 8px 0 0;
-  font-size: 0.9rem;
+  margin: 3px 0 0;
+  font-size: 0.78rem;
   line-height: 1.25;
 }
 
@@ -318,18 +275,15 @@ button:active {
    senão o painel cobre o analógico e o minimapa engole os botões. */
 @media (max-height: 520px) {
   #hud {
-    max-width: 44vw;
-    padding: 8px 12px;
+    max-width: 40vw;
   }
 
   #hud h1 {
-    font-size: 0.95rem;
-    margin-bottom: 4px;
+    font-size: 0.9rem;
   }
 
   #objective {
-    font-size: 0.75rem;
-    margin-top: 5px;
+    font-size: 0.72rem;
   }
 
   #buttons {
@@ -371,16 +325,15 @@ button:active {
 
 @media (max-width: 620px) {
   #hud {
-    max-width: 58vw;
-    padding: 9px 12px;
+    max-width: 56vw;
   }
 
   #hud h1 {
-    font-size: 1rem;
+    font-size: 0.92rem;
   }
 
   #objective {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
   }
 
   #minimap {

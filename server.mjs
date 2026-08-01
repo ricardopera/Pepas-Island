@@ -17,6 +17,7 @@ const TYPES = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml',
+  '.webmanifest': 'application/manifest+json',
   '.ico': 'image/x-icon',
 };
 

@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Ilhas da Pepa — passeio de barco</title>
     <link rel="stylesheet" href="./styles.css" />
+    <!-- Instalado pela "Adicionar à tela inicial", o jogo abre em tela cheia
+         de verdade no Android, sem depender da API de fullscreen. -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#2f79bd" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚤</text></svg>"
+      href="./icon.svg"
     />
     <script type="importmap">
       {
@@ -22,15 +28,12 @@
 
     <!-- Painel de missão -->
     <div id="hud">
-      <button id="hud-toggle" title="Recolher o painel" aria-expanded="true">▾</button>
-      <div id="hud-body">
-        <h1>Ilhas da Pepa</h1>
-        <div class="stats">
-          <span class="chip">🧍 A bordo: <b id="aboard">0</b></span>
-          <span class="chip">🎉 Na festa: <b id="delivered">0/6</b></span>
-        </div>
-        <p id="objective">Navegue até uma ilha e pegue um amigo.</p>
+      <h1>Ilhas da Pepa</h1>
+      <div class="stats">
+        <span class="chip">🧍 <b id="aboard">0</b></span>
+        <span class="chip">🎉 <b id="delivered">0/6</b></span>
       </div>
+      <p id="objective">Navegue até uma ilha e pegue um amigo.</p>
     </div>
 
     <div id="buttons">
