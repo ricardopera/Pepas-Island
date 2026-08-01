@@ -91,8 +91,11 @@ export function createIsland(config) {
     island.add(tree);
   }
 
+  const dockAngle = Math.atan2(-position[0], -position[1]);
+
   for (let i = 0; i < bushes; i++) {
-    const angle = rng() * Math.PI * 2;
+    // Longe do cais: é onde ficam o passageiro e o embarque.
+    const angle = dockAngle + 0.8 + rng() * (Math.PI * 2 - 1.6);
     const distance = radius * (0.64 + rng() * 0.24);
     const bush = createBush(0.8 + rng() * 0.5);
     bush.position.set(
@@ -118,7 +121,6 @@ export function createIsland(config) {
   }
 
   // Cais: fica na borda voltada para o centro do arquipélago.
-  const dockAngle = Math.atan2(-position[0], -position[1]);
   const dock = createDock(2.8);
   const dockDistance = radius - 1.2;
   dock.position.set(

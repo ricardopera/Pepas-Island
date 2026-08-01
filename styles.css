@@ -321,6 +321,15 @@ button:active {
     max-width: 44vw;
     font-size: 0.78rem;
   }
+
+  /* Deitado, o balão no alto cobria o texto da missão e os botões: o espaço
+     livre é embaixo, entre o analógico e o minimapa. */
+  #toast {
+    top: auto;
+    bottom: 12px;
+    font-size: 0.85rem;
+    max-width: 46vw;
+  }
 }
 
 @media (max-width: 620px) {
